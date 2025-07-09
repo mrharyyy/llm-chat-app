@@ -69,35 +69,25 @@ async function sendMessage() {
 
     if (!response.ok) throw new Error("Failed to get response");
 
-    const reader = response.body.getReader();
-    const decoder = new TextDecoder();
-    let responseText = "";
+    const data = await response.json();   // 👈 Change: Use JSON not stream
+    const fullResponse = data.result || data.response || "";  // ✅ Adjust as per your API
 
-    while (true) {
-      const { done, value } = await reader.read();
-      if (done) break;
+    // Typewriter effect:
+    const pTag = assistantMessageEl.querySelector("p");
+    let index = 0;
 
-      const chunk = decoder.decode(value, { stream: true });
-      const lines = chunk.split("\n");
-
-      for (const line of lines) {
-        try {
-          const jsonData = JSON.parse(line);
-          if (jsonData.response) {
-            responseText += jsonData.response;
-
-            const safeContent = cleanContent(responseText);
-            assistantMessageEl.innerHTML = marked.parse(safeContent);
-
-            chatMessages.scrollTop = chatMessages.scrollHeight;
-          }
-        } catch (e) {
-          console.error("Error parsing JSON:", e);
-        }
+    function typeWriter() {
+      if (index < fullResponse.length) {
+        pTag.innerHTML += fullResponse.charAt(index);
+        index++;
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+        setTimeout(typeWriter, 20);  // Speed control here
       }
     }
 
-    chatHistory.push({ role: "assistant", content: responseText });
+    typeWriter();
+    chatHistory.push({ role: "assistant", content: fullResponse });
+
   } catch (error) {
     console.error("Error:", error);
     addMessageToChat("assistant", "Sorry, there was an error processing your request.");
