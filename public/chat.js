@@ -135,11 +135,20 @@ function addMessageToChat(role, content) {
 }
 
 function cleanContent(content) {
-  // Remove **bold** stars and replace with <strong>
+  // Step 1: Bold (**text**) ko <strong> me badlo
   let cleaned = content.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
 
-  // Remove *italic* stars and replace with <em>
+  // Step 2: Italic (*text*) ko <em> me badlo
   cleaned = cleaned.replace(/\*(.*?)\*/g, '<em>$1</em>');
 
-  return cleaned;
+  // Step 3: Hashtags (#) hatao
+  cleaned = cleaned.replace(/#/g, '');
+
+  // Step 4: Square [ ] ya round ( ) brackets hatao
+  cleaned = cleaned.replace(/[\[\]()]/g, '');
+
+  // Step 5: Koi bacha-kucha star hatao
+  cleaned = cleaned.replace(/\*/g, '');
+
+  return cleaned.trim();
 }
