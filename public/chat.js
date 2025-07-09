@@ -152,15 +152,12 @@ function addMessageToChat(role, content) {
   const messageEl = document.createElement("div");
   messageEl.className = `message ${role}-message`;
 
-  // Step 1: Remove leading/trailing stars (** or *)
-  const cleanedContent = content
-    .replace(/^\*+/, '')     // Stars at the start
-    .replace(/\*+$/, '');     // Stars at the end
+  // Remove all stars (single or double) from the content
+  const cleanedContent = content.replace(/\*\*/g, "").replace(/\*/g, "");
 
-  // Step 2: Convert Markdown to HTML
+  // Convert Markdown to HTML (for bullets, lists, headings)
   messageEl.innerHTML = marked.parse(cleanedContent);
 
   chatMessages.appendChild(messageEl);
-
   chatMessages.scrollTop = chatMessages.scrollHeight;
 }
