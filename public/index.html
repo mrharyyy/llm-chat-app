@@ -1,202 +1,213 @@
-<!DOCTYPE html><html lang="en">
+<!DOCTYPE html>
+<html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-    <title>Swift Chat⚡</title><style>
-  :root {
-    --primary-color: #f6821f;
-    --primary-hover: #e67e22;
-    --light-bg: #f9fafb;
-    --border-color: #e5e7eb;
-    --text-color: #1f2937;
-    --text-light: #6b7280;
-    --user-msg-bg: #fff2e6;
-    --assistant-msg-bg: #f3f4f6;
-  }
+    <title>Swift Chat⚡</title>
 
-  html, body {
-    height: 100%;
-    margin: 0;
-    padding: 0;
-    overflow: hidden;
-  }
+    <style>
+      :root {
+        --primary-color: #f6821f;
+        --primary-hover: #e67e22;
+        --light-bg: #f9fafb;
+        --border-color: #e5e7eb;
+        --text-color: #1f2937;
+        --text-light: #6b7280;
+        --user-msg-bg: #fff2e6;
+        --assistant-msg-bg: #f3f4f6;
+      }
 
-  body {
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-    line-height: 1.6;
-    color: var(--text-color);
-    max-width: 800px;
-    margin: 0 auto;
-    display: flex;
-    flex-direction: column;
-  }
+      html, body {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+        overflow: hidden;
+      }
 
-  header {
-    text-align: center;
-    padding: 1rem 0;
-    border-bottom: 1px solid var(--border-color);
-    flex-shrink: 0;
-  }
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+        line-height: 1.6;
+        color: var(--text-color);
+        max-width: 800px;
+        margin: 0 auto;
+        display: flex;
+        flex-direction: column;
+      }
 
-  h1 {
-    font-size: 1.5rem;
-    color: var(--primary-color);
-  }
+      header {
+        text-align: center;
+        padding: 1rem 0;
+        border-bottom: 1px solid var(--border-color);
+        flex-shrink: 0;
+      }
 
-  .chat-container {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    min-height: 0;
-    border: 1px solid var(--border-color);
-    border-radius: 8px;
-    overflow: hidden;
-  }
+      h1 {
+        font-size: 1.5rem;
+        color: var(--primary-color);
+      }
 
-  .chat-messages {
-    flex: 1;
-    overflow-y: auto;
-    padding: 1rem;
-    background-color: var(--light-bg);
-  }
+      .chat-container {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        min-height: 0;
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        overflow: hidden;
+      }
 
-  .message {
-    margin-bottom: 1rem;
-    padding: 0.75rem;
-    border-radius: 8px;
-    max-width: 80%;
-  }
+      .chat-messages {
+        flex: 1;
+        overflow-y: auto;
+        padding: 1rem;
+        background-color: var(--light-bg);
+      }
 
-  .user-message {
-    background-color: var(--user-msg-bg);
-    align-self: flex-end;
-    margin-left: auto;
-  }
+      .message {
+        margin-bottom: 1rem;
+        padding: 0.75rem;
+        border-radius: 8px;
+        max-width: 80%;
+      }
 
-  .assistant-message {
-    background-color: var(--assistant-msg-bg);
-    align-self: flex-start;
-  }
+      .user-message {
+        background-color: var(--user-msg-bg);
+        align-self: flex-end;
+        margin-left: auto;
+      }
 
-  ul {
-    padding-left: 20px;
-    margin-top: 10px;
-    margin-bottom: 10px;
-    list-style-type: disc;
-    font-size: 15px;
-    color: #333;
-  }
+      .assistant-message {
+        background-color: var(--assistant-msg-bg);
+        align-self: flex-start;
+      }
 
-  li {
-    margin-bottom: 6px;
-    line-height: 1.6;
-  }
+      ul {
+        padding-left: 20px;
+        margin-top: 10px;
+        margin-bottom: 10px;
+        list-style-type: disc;
+        font-size: 15px;
+        color: #333;
+      }
 
-  .message p:first-child {
-    font-weight: bold;
-    font-size: 16px;
-    color: var(--primary-color);
-    margin-bottom: 8px;
-  }
+      li {
+        margin-bottom: 6px;
+        line-height: 1.6;
+      }
 
-  .message-input {
-    display: flex;
-    padding: 0.5rem;
-    border-top: 1px solid var(--border-color);
-    background-color: white;
-    flex-shrink: 0;
-  }
+      .message p:first-child {
+        font-weight: bold;
+        font-size: 16px;
+        color: var(--primary-color);
+        margin-bottom: 8px;
+      }
 
-  #user-input {
-    flex: 1;
-    padding: 0.5rem;
-    border: 1px solid var(--border-color);
-    border-radius: 4px;
-    font-family: inherit;
-    resize: none;
-    min-height: 36px;
-  }
+      /* Yeh naya CSS tumhara bold text ke liye */
+      .message p strong {
+        color: var(--primary-color);
+        font-weight: bold;
+        font-size: 16px;
+      }
 
-  #send-button {
-    margin-left: 0.5rem;
-    padding: 0 1rem;
-    background-color: var(--primary-color);
-    color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 14px;
-    transition: background-color 0.2s;
-  }
+      .message-input {
+        display: flex;
+        padding: 0.5rem;
+        border-top: 1px solid var(--border-color);
+        background-color: white;
+        flex-shrink: 0;
+      }
 
-  #send-button:hover {
-    background-color: var(--primary-hover);
-  }
+      #user-input {
+        flex: 1;
+        padding: 0.5rem;
+        border: 1px solid var(--border-color);
+        border-radius: 4px;
+        font-family: inherit;
+        resize: none;
+        min-height: 36px;
+      }
 
-  #send-button:disabled {
-    background-color: var(--text-light);
-    cursor: not-allowed;
-  }
+      #send-button {
+        margin-left: 0.5rem;
+        padding: 0 1rem;
+        background-color: var(--primary-color);
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 14px;
+        transition: background-color 0.2s;
+      }
 
-  .typing-indicator {
-    display: none;
-    margin-bottom: 1rem;
-    font-style: italic;
-    color: var(--text-light);
-  }
+      #send-button:hover {
+        background-color: var(--primary-hover);
+      }
 
-  .typing-indicator.visible {
-    display: block;
-  }
+      #send-button:disabled {
+        background-color: var(--text-light);
+        cursor: not-allowed;
+      }
 
-  footer {
-    margin-top: 1rem;
-    text-align: center;
-    font-size: 0.85rem;
-    color: var(--text-light);
-    flex-shrink: 0;
-  }
+      .typing-indicator {
+        display: none;
+        margin-bottom: 1rem;
+        font-style: italic;
+        color: var(--text-light);
+      }
 
-</style>
+      .typing-indicator.visible {
+        display: block;
+      }
 
+      footer {
+        margin-top: 1rem;
+        text-align: center;
+        font-size: 0.85rem;
+        color: var(--text-light);
+        flex-shrink: 0;
+      }
+
+    </style>
   </head>
   <body>
     <header>
       <h1>Swift Chat⚡</h1>
       <p>Ask anything, get instant answer</p>
-    </header><div class="chat-container">
-  <div id="chat-messages" class="chat-messages">
-    <div class="message assistant-message">
-      <p>Hello! I'm an LLM chat app powered by Cloudflare Workers AI. How can I help you today?</p>
+    </header>
+
+    <div class="chat-container">
+      <div id="chat-messages" class="chat-messages">
+        <div class="message assistant-message">
+          <p>Hello! I'm an LLM chat app powered by Cloudflare Workers AI. How can I help you today?</p>
+        </div>
+      </div>
+
+      <div class="typing-indicator" id="typing-indicator">
+        AI is thinking...
+      </div>
+
+      <div class="message-input">
+        <textarea id="user-input" placeholder="Type your message here..." rows="1" autofocus></textarea>
+        <button id="send-button">Send</button>
+      </div>
     </div>
-  </div>
 
-  <div class="typing-indicator" id="typing-indicator">
-    AI is thinking...
-  </div>
+    <footer>
+      <p>⚡ Swift Chat • Made by Ashish © 2025</p>
+    </footer>
 
-  <div class="message-input">
-    <textarea id="user-input" placeholder="Type your message here..." rows="1" autofocus></textarea>
-    <button id="send-button">Send</button>
-  </div>
-</div>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script src="chat.js"></script>
 
-<footer>
-  <p>Cloudflare Workers AI Chat Template &copy; 2025</p>
-</footer>
+    <script>
+      const userInput = document.getElementById('user-input');
 
-<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
-<script src="chat.js"></script>
-
-<script>
-  const userInput = document.getElementById('user-input');
-
-  userInput.addEventListener('focus', () => {
-    setTimeout(() => {
-      userInput.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-    }, 300);
-  });
-</script>
+      userInput.addEventListener('focus', () => {
+        setTimeout(() => {
+          userInput.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }, 300);
+      });
+    </script>
 
   </body>
 </html>
