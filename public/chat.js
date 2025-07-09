@@ -152,13 +152,10 @@ function addMessageToChat(role, content) {
   const messageEl = document.createElement("div");
   messageEl.className = `message ${role}-message`;
 
-  // Step 1: Remove all raw stars (double or single) first
-  let cleanedContent = content.replace(/\*\*/g, "").replace(/\*/g, "");
+  // Step 1: Remove ALL stars anywhere (manual * or **)
+  const cleanedContent = content.replace(/\*/g, "");
 
-  // Step 2: OPTIONAL - You can manually bold first line if you want
-  // OR leave it clean for CSS
-
-  // Step 3: Parse the cleaned content for bullets, lists etc.
+  // Step 2: Parse the cleaned content (for real lists, etc.)
   messageEl.innerHTML = marked.parse(cleanedContent);
 
   chatMessages.appendChild(messageEl);
