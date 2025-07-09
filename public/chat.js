@@ -114,11 +114,32 @@ function addMessageToChat(role, content) {
   const messageEl = document.createElement("div");
   messageEl.className = `message ${role}-message`;
 
-  const safeContent = cleanContent(content);
-  messageEl.innerHTML = marked.parse(safeContent);
+  const cleanedContent = content.replace(/\*/g, "");
 
+  // For Markdown formatting (if you want lists, bold etc.)
+  const htmlContent = marked.parse(cleanedContent);
+
+  messageEl.innerHTML = "<p></p>";
   chatMessages.appendChild(messageEl);
   chatMessages.scrollTop = chatMessages.scrollHeight;
+
+  const pTag = messageEl.querySelector("p");
+  let index = 0;
+
+  function typeWriter() {
+    if (index < cleanedContent.length) {
+      pTag.textContent += cleanedContent.charAt(index);
+      index++;
+      chatMessages.scrollTop = chatMessages.scrollHeight;
+      setTimeout(typeWriter, 15);
+    }
+  }
+
+  if (role === "assistant") {
+    typeWriter();
+  } else {
+    pTag.textContent = cleanedContent;
+  }
 }
 
 function cleanContent(content) {
