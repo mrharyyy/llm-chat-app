@@ -69,24 +69,26 @@ async function sendMessage() {
 
     if (!response.ok) throw new Error("Failed to get response");
 
-    const data = await response.json();   // 👈 Change: Use JSON not stream
-    const fullResponse = data.result || data.response || "";  // ✅ Adjust as per your API
+    const data = await response.json();
+    const rawResponse = data.result || data.response || "";
 
-    // Typewriter effect:
+    const cleanedResponse = cleanContent(rawResponse);
+
     const pTag = assistantMessageEl.querySelector("p");
     let index = 0;
 
     function typeWriter() {
-      if (index < fullResponse.length) {
-        pTag.innerHTML += fullResponse.charAt(index);
-        index++;
+      if (index < cleanedResponse.length) {
+        pTag.innerHTML += cleanedResponse.charAt(index);
         chatMessages.scrollTop = chatMessages.scrollHeight;
-        setTimeout(typeWriter, 20);  // Speed control here
+        index++;
+        setTimeout(typeWriter, 20);
       }
     }
 
     typeWriter();
-    chatHistory.push({ role: "assistant", content: fullResponse });
+
+    chatHistory.push({ role: "assistant", content: cleanedResponse });
 
   } catch (error) {
     console.error("Error:", error);
