@@ -150,7 +150,13 @@ async function sendMessage() {
 function addMessageToChat(role, content) {
   const messageEl = document.createElement("div");
   messageEl.className = `message ${role}-message`;
-  messageEl.innerHTML = `<p>${content}</p>`;
+
+  // Remove stars (bold markers)
+  const cleanedContent = content.replace(/\*\*/g, "");
+
+  // Convert Markdown to HTML (for bullets and lists)
+  messageEl.innerHTML = marked.parse(cleanedContent);
+
   chatMessages.appendChild(messageEl);
 
   // Scroll to bottom
