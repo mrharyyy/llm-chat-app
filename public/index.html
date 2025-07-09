@@ -4,35 +4,46 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>LLM Chat App</title>
-    <style>
-      :root {
-        --primary-color: #f6821f;
-        --primary-hover: #e67e22;
-        --light-bg: #f9fafb;
-        --border-color: #e5e7eb;
-        --text-color: #1f2937;
-        --text-light: #6b7280;
-        --user-msg-bg: #fff2e6;
-        --assistant-msg-bg: #f3f4f6;
-      }
-      ul {
-  padding-left: 20px;
-  margin-top: 10px;
-  margin-bottom: 10px;
-  list-style-type: disc;
-  font-size: 15px;
-  color: #333;
-}
-li {
-  margin-bottom: 6px;
-  line-height: 1.6;
-}
-      
-      * {
-        box-sizing: border-box;
-        margin: 0;
-        padding: 0;
-      }
+    <<style>
+  :root {
+    --primary-color: #f6821f;
+    --primary-hover: #e67e22;
+    --light-bg: #f9fafb;
+    --border-color: #e5e7eb;
+    --text-color: #1f2937;
+    --text-light: #6b7280;
+    --user-msg-bg: #fff2e6;
+    --assistant-msg-bg: #f3f4f6;
+  }
+
+  ul {
+    padding-left: 20px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    list-style-type: disc;
+    font-size: 15px;
+    color: #333;
+  }
+
+  li {
+    margin-bottom: 6px;
+    line-height: 1.6;
+  }
+
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  .message p:first-child {
+    font-weight: bold;
+    font-size: 16px;
+    color: #f6821f;
+    margin-bottom: 8px;
+  }
+   
+    </style>
 
       body {
         font-family:
