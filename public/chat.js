@@ -147,14 +147,17 @@ async function sendMessage() {
 /**
  * Helper function to add message to chat
  */
+
 function addMessageToChat(role, content) {
   const messageEl = document.createElement("div");
   messageEl.className = `message ${role}-message`;
 
-  // Remove both double stars and single stars
-  const cleanedContent = content.replace(/\*\*/g, "").replace(/\*/g, "");
+  // Step 1: Remove leading/trailing stars (** or *)
+  const cleanedContent = content
+    .replace(/^\*+/, '')     // Stars at the start
+    .replace(/\*+$/, '');     // Stars at the end
 
-  // Parse Markdown (now without stars)
+  // Step 2: Convert Markdown to HTML
   messageEl.innerHTML = marked.parse(cleanedContent);
 
   chatMessages.appendChild(messageEl);
