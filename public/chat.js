@@ -122,8 +122,11 @@ function addMessageToChat(role, content) {
 }
 
 function cleanContent(content) {
-  // Remove * and ** but preserve real lists
-  let cleaned = content.replace(/\*\*(.*?)\*\*/g, '$1');  // Remove bold stars
-  cleaned = cleaned.replace(/\*(.*?)\*/g, '$1');          // Remove italic stars
+  // Remove **bold** stars and replace with <strong>
+  let cleaned = content.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+
+  // Remove *italic* stars and replace with <em>
+  cleaned = cleaned.replace(/\*(.*?)\*/g, '<em>$1</em>');
+
   return cleaned;
 }
