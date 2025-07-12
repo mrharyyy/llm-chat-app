@@ -1,154 +1,51 @@
-/**
- * LLM Chat App Frontend
- *
- * Handles the chat UI interactions and communication with the backend API.
- */
+// chat.js
 
+// DOM Elements const chatMessages = document.getElementById("chat-messages"); const userInput = document.getElementById("user-input"); const sendButton = document.getElementById("send-button"); const typingIndicator = document.getElementById("typing-indicator"); const scrollButton = document.getElementById("scroll-button");
 
-  // DOM elements
-const chatMessages = document.getElementById("chat-messages");
-const userInput = document.getElementById("user-input");
-const sendButton = document.getElementById("send-button");
-const typingIndicator = document.getElementById("typing-indicator");
+let chatHistory = []; let isProcessing = false;
 
-// Chat state
-let chatHistory = [
-  {
-    role: "assistant",
-    content: "Hello! I'm an LLM chat app powered by Cloudflare Workers AI. How can I help you today?",
-  },
-];
-let isProcessing = false;
+// Auto-resize textarea userInput.addEventListener("input", function () { this.style.height = "auto"; this.style.height = this.scrollHeight + "px"; });
 
-// Auto-resize textarea
-userInput.addEventListener("input", function () {
-  this.style.height = "auto";
-  this.style.height = this.scrollHeight + "px";
-});
+// Send message on Enter key userInput.addEventListener("keydown", function (e) { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); sendMessage(); } });
 
-// Send on Enter
-userInput.addEventListener("keydown", function (e) {
-  if (e.key === "Enter" && !e.shiftKey) {
-    e.preventDefault();
-    sendMessage();
-  }
-});
+// Send message on button click sendButton.addEventListener("click", sendMessage);
 
-// Button click
-sendButton.addEventListener("click", sendMessage);
+// Scroll to bottom button behavior scrollButton.addEventListener("click", () => { chatMessages.scrollTop = chatMessages.scrollHeight; });
 
-async function sendMessage() {
-  const message = userInput.value.trim();
-  if (message === "" || isProcessing) return;
+chatMessages.addEventListener("scroll", () => { if (chatMessages.scrollTop < chatMessages.scrollHeight - chatMessages.clientHeight - 200) { scrollButton.classList.add("show"); } else { scrollButton.classList.remove("show"); } });
 
-  isProcessing = true;
-  userInput.disabled = true;
-  sendButton.disabled = true;
+async function sendMessage() { const message = userInput.value.trim(); if (!message || isProcessing) return;
 
-  addMessageToChat("user", message);
+isProcessing = true; userInput.disabled = true; sendButton.disabled = true;
 
-  userInput.value = "";
-  userInput.style.height = "auto";
+addMessage("user", message); chatHistory.push({ role: "user", content: message });
 
-  typingIndicator.classList.add("visible");
+userInput.value = ""; userInput.style.height = "auto"; typingIndicator.classList.add("visible");
 
-  chatHistory.push({ role: "user", content: message });
+try { const response = await fetch("/api/chat", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ messages: chatHistory }) });
 
-  try {
-    const assistantMessageEl = document.createElement("div");
-    assistantMessageEl.className = "message assistant-message";
-    assistantMessageEl.innerHTML = "<p></p>";
-    chatMessages.appendChild(assistantMessageEl);
-    chatMessages.scrollTop = chatMessages.scrollHeight;
+const data = await response.json();
+const raw = data.result || data.response || "Sorry, no response received.";
+const cleaned = cleanContent(raw);
 
-    const response = await fetch("/api/chat", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ messages: chatHistory }),
-    });
+addMessage("assistant", cleaned);
+chatHistory.push({ role: "assistant", content: cleaned });
 
-    if (!response.ok) throw new Error("Failed to get response");
+} catch (err) { console.error(err); addMessage("assistant", "❌ Sorry, something went wrong."); } finally { typingIndicator.classList.remove("visible"); isProcessing = false; userInput.disabled = false; sendButton.disabled = false; userInput.focus(); } }
 
-    const data = await response.json();
-    const rawResponse = data.result || data.response || "";
+function addMessage(role, content) { const message = document.createElement("div"); message.className = message ${role}-message;
 
-    const cleanedResponse = cleanContent(rawResponse);
+const avatar = document.createElement("div"); avatar.className = "avatar"; avatar.textContent = role === "user" ? "👤" : "🤖";
 
-    const pTag = assistantMessageEl.querySelector("p");
-    let index = 0;
+const contentBox = document.createElement("div"); contentBox.className = "content"; contentBox.innerHTML = "<p></p>";
 
-    function typeWriter() {
-      if (index < cleanedResponse.length) {
-        pTag.innerHTML += cleanedResponse.charAt(index);
-        chatMessages.scrollTop = chatMessages.scrollHeight;
-        index++;
-        setTimeout(typeWriter, 20);
-      }
-    }
+const messageText = contentBox.querySelector("p");
 
-    typeWriter();
+message.appendChild(avatar); message.appendChild(contentBox); chatMessages.appendChild(message); chatMessages.scrollTop = chatMessages.scrollHeight;
 
-    chatHistory.push({ role: "assistant", content: cleanedResponse });
+let i = 0; function typeEffect() { if (i < content.length) { messageText.innerHTML += content.charAt(i); i++; chatMessages.scrollTop = chatMessages.scrollHeight; setTimeout(typeEffect, 15); } }
 
-  } catch (error) {
-    console.error("Error:", error);
-    addMessageToChat("assistant", "Sorry, there was an error processing your request.");
-  } finally {
-    typingIndicator.classList.remove("visible");
-    isProcessing = false;
-    userInput.disabled = false;
-    sendButton.disabled = false;
-    userInput.focus();
-  }
-}
+if (role === "assistant") { typeEffect(); } else { messageText.textContent = content; } }
 
-function addMessageToChat(role, content) {
-  const messageEl = document.createElement("div");
-  messageEl.className = `message ${role}-message`;
+function cleanContent(content) { let cleaned = content.replace(/**(.?)**/g, '<strong>$1</strong>'); // Bold cleaned = cleaned.replace(/*(.?)*/g, '<em>$1</em>'); // Italic cleaned = cleaned.replace(/^\s*[-*] /gm, '• '); // Bullet lists return cleaned; }
 
-  const cleanedContent = content.replace(/\*/g, "");
-
-  // For Markdown formatting (if you want lists, bold etc.)
-  const htmlContent = marked.parse(cleanedContent);
-
-  messageEl.innerHTML = "<p></p>";
-  chatMessages.appendChild(messageEl);
-  chatMessages.scrollTop = chatMessages.scrollHeight;
-
-  const pTag = messageEl.querySelector("p");
-  let index = 0;
-
-  function typeWriter() {
-    if (index < cleanedContent.length) {
-      pTag.textContent += cleanedContent.charAt(index);
-      index++;
-      chatMessages.scrollTop = chatMessages.scrollHeight;
-      setTimeout(typeWriter, 15);
-    }
-  }
-
-  if (role === "assistant") {
-    typeWriter();
-  } else {
-    pTag.textContent = cleanedContent;
-  }
-}
-
-function cleanContent(content) {
-  // Step 1: Bold (**text**) ko <strong> me badlo
-  let cleaned = content.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
-
-  // Step 2: Italic (*text*) ko <em> me badlo
-  cleaned = cleaned.replace(/\*(.*?)\*/g, '<em>$1</em>');
-
-  // Step 3: Hashtags (#) hatao
-  cleaned = cleaned.replace(/#/g, '');
-
-  // Step 4: Square [ ] ya round ( ) brackets hatao
-  cleaned = cleaned.replace(/[\[\]()]/g, '');
-
-  // Step 5: Koi bacha-kucha star hatao
-  cleaned = cleaned.replace(/\*/g, '');
-
-  return cleaned.trim();
-}
