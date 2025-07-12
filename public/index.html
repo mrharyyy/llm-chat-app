@@ -1,10 +1,8 @@
-<!DOCTYPE html>
-<html lang="en">
+<!DOCTYPE html><html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     <title>Swift Chat⚡</title>
-
     <style>
       :root {
         --primary-color: #f6821f;
@@ -15,199 +13,291 @@
         --text-light: #6b7280;
         --user-msg-bg: #fff2e6;
         --assistant-msg-bg: #f3f4f6;
-      }
+      }html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+  }
 
-      html, body {
-        height: 100%;
-        margin: 0;
-        padding: 0;
-        overflow: hidden;
-      }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    line-height: 1.6;
+    color: var(--text-color);
+    max-width: 800px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+  }
 
-      body {
-        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-        line-height: 1.6;
-        color: var(--text-color);
-        max-width: 800px;
-        margin: 0 auto;
-        display: flex;
-        flex-direction: column;
-      }
+  header {
+    text-align: center;
+    padding: 1rem 0;
+    border-bottom: 1px solid var(--border-color);
+    flex-shrink: 0;
+  }
 
-      header {
-        text-align: center;
-        padding: 1rem 0;
-        border-bottom: 1px solid var(--border-color);
-        flex-shrink: 0;
-      }
+  h1 {
+    font-size: 1.5rem;
+    color: var(--primary-color);
+  }
 
-      h1 {
-        font-size: 1.5rem;
-        color: var(--primary-color);
-      }
+  .chat-container {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    overflow: hidden;
+  }
 
-      .chat-container {
-        flex: 1;
-        display: flex;
-        flex-direction: column;
-        min-height: 0;
-        border: 1px solid var(--border-color);
-        border-radius: 8px;
-        overflow: hidden;
-      }
+  .chat-messages {
+    flex: 1;
+    overflow-y: auto;
+    padding: 1rem;
+    background-color: var(--light-bg);
+  }
 
-      .chat-messages {
-        flex: 1;
-        overflow-y: auto;
-        padding: 1rem;
-        background-color: var(--light-bg);
-      }
+  .message {
+    margin-bottom: 1rem;
+    padding: 0.75rem;
+    border-radius: 8px;
+    max-width: 80%;
+  }
 
-      .message {
-        margin-bottom: 1rem;
-        padding: 0.75rem;
-        border-radius: 8px;
-        max-width: 80%;
-      }
+  .user-message {
+    background-color: var(--user-msg-bg);
+    align-self: flex-end;
+    margin-left: auto;
+  }
 
-      .user-message {
-        background-color: var(--user-msg-bg);
-        align-self: flex-end;
-        margin-left: auto;
-      }
+  .assistant-message {
+    background-color: var(--assistant-msg-bg);
+    align-self: flex-start;
+  }
 
-      .assistant-message {
-        background-color: var(--assistant-msg-bg);
-        align-self: flex-start;
-      }
+  ul {
+    padding-left: 20px;
+    margin: 10px 0;
+    list-style-type: disc;
+    font-size: 15px;
+    color: #333;
+  }
 
-      ul {
-        padding-left: 20px;
-        margin-top: 10px;
-        margin-bottom: 10px;
-        list-style-type: disc;
-        font-size: 15px;
-        color: #333;
-      }
+  li {
+    margin-bottom: 6px;
+    line-height: 1.6;
+  }
 
-      li {
-        margin-bottom: 6px;
-        line-height: 1.6;
-      }
+  .message p strong {
+    color: var(--primary-color);
+    font-weight: bold;
+    font-size: 16px;
+  }
 
-      .message p:first-child {
-        font-weight: bold;
-        font-size: 16px;
-        color: var(--primary-color);
-        margin-bottom: 8px;
-      }
+  .message-input {
+    display: flex;
+    padding: 0.5rem;
+    border-top: 1px solid var(--border-color);
+    background-color: white;
+    flex-shrink: 0;
+  }
 
-      /* Yeh naya CSS tumhara bold text ke liye */
-      .message p strong {
-        color: var(--primary-color);
-        font-weight: bold;
-        font-size: 16px;
-      }
+  #user-input {
+    flex: 1;
+    padding: 0.5rem;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    font-family: inherit;
+    resize: none;
+    min-height: 36px;
+  }
 
-      .message-input {
-        display: flex;
-        padding: 0.5rem;
-        border-top: 1px solid var(--border-color);
-        background-color: white;
-        flex-shrink: 0;
-      }
+  #send-button {
+    margin-left: 0.5rem;
+    padding: 0 1rem;
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.2s;
+  }
 
-      #user-input {
-        flex: 1;
-        padding: 0.5rem;
-        border: 1px solid var(--border-color);
-        border-radius: 4px;
-        font-family: inherit;
-        resize: none;
-        min-height: 36px;
-      }
+  #send-button:hover {
+    background-color: var(--primary-hover);
+  }
 
-      #send-button {
-        margin-left: 0.5rem;
-        padding: 0 1rem;
-        background-color: var(--primary-color);
-        color: white;
-        border: none;
-        border-radius: 4px;
-        cursor: pointer;
-        font-size: 14px;
-        transition: background-color 0.2s;
-      }
+  #send-button:disabled {
+    background-color: var(--text-light);
+    cursor: not-allowed;
+  }
 
-      #send-button:hover {
-        background-color: var(--primary-hover);
-      }
+  .typing-indicator {
+    display: none;
+    margin-bottom: 1rem;
+    font-style: italic;
+    color: var(--text-light);
+  }
 
-      #send-button:disabled {
-        background-color: var(--text-light);
-        cursor: not-allowed;
-      }
+  .typing-indicator.visible {
+    display: block;
+  }
 
-      .typing-indicator {
-        display: none;
-        margin-bottom: 1rem;
-        font-style: italic;
-        color: var(--text-light);
-      }
+  footer {
+    margin-top: 1rem;
+    text-align: center;
+    font-size: 0.85rem;
+    color: var(--text-light);
+    flex-shrink: 0;
+  }
+</style>
 
-      .typing-indicator.visible {
-        display: block;
-      }
-
-      footer {
-        margin-top: 1rem;
-        text-align: center;
-        font-size: 0.85rem;
-        color: var(--text-light);
-        flex-shrink: 0;
-      }
-
-    </style>
   </head>
   <body>
     <header>
       <h1>Swift Chat⚡</h1>
       <p>Ask anything, get instant answer</p>
-    </header>
-
-    <div class="chat-container">
-      <div id="chat-messages" class="chat-messages">
-        <div class="message assistant-message">
-          <p>Hello! I'm an LLM chat app powered by Cloudflare Workers AI. How can I help you today?</p>
-        </div>
-      </div>
-
-      <div class="typing-indicator" id="typing-indicator">
-        AI is thinking...
-      </div>
-
-      <div class="message-input">
-        <textarea id="user-input" placeholder="Type your message here..." rows="1" autofocus></textarea>
-        <button id="send-button">Send</button>
-      </div>
+    </header><div class="chat-container">
+  <div id="chat-messages" class="chat-messages">
+    <div class="message assistant-message">
+      <p><strong>Welcome!</strong> I'm an AI assistant, here to help you. 😊</p>
     </div>
+  </div>
 
-    <footer>
-      <p>⚡ Swift Chat • Made by Ashish © 2025</p>
-    </footer>
+  <div class="typing-indicator" id="typing-indicator">AI is thinking...</div>
 
-    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
-    <script src="chat.js"></script>
+  <div class="message-input">
+    <textarea id="user-input" placeholder="Type your message here..." rows="1" autofocus></textarea>
+    <button id="send-button">Send</button>
+  </div>
+</div>
 
-    <script>
-      const userInput = document.getElementById('user-input');
+<footer>
+  <p>⚡ Swift Chat • Made by Ashish © 2025</p>
+</footer>
 
-      userInput.addEventListener('focus', () => {
-        setTimeout(() => {
-          userInput.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-        }, 300);
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+<script>
+  const chatMessages = document.getElementById("chat-messages");
+  const userInput = document.getElementById("user-input");
+  const sendButton = document.getElementById("send-button");
+  const typingIndicator = document.getElementById("typing-indicator");
+
+  let chatHistory = [];
+  let isProcessing = false;
+
+  userInput.addEventListener("input", function () {
+    this.style.height = "auto";
+    this.style.height = this.scrollHeight + "px";
+  });
+
+  userInput.addEventListener("keydown", function (e) {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      sendMessage();
+    }
+  });
+
+  sendButton.addEventListener("click", sendMessage);
+
+  async function sendMessage() {
+    const message = userInput.value.trim();
+    if (!message || isProcessing) return;
+
+    isProcessing = true;
+    userInput.disabled = true;
+    sendButton.disabled = true;
+
+    addMessageToChat("user", message);
+    userInput.value = "";
+    userInput.style.height = "auto";
+    typingIndicator.classList.add("visible");
+    chatHistory.push({ role: "user", content: message });
+
+    try {
+      const assistantMessageEl = document.createElement("div");
+      assistantMessageEl.className = "message assistant-message";
+      assistantMessageEl.innerHTML = "<p></p>";
+      chatMessages.appendChild(assistantMessageEl);
+      chatMessages.scrollTop = chatMessages.scrollHeight;
+
+      const response = await fetch("/api/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ messages: chatHistory })
       });
-    </script>
+
+      const data = await response.json();
+      const cleaned = cleanContent(data.response || "");
+
+      const pTag = assistantMessageEl.querySelector("p");
+      let i = 0;
+      function typeWriter() {
+        if (i < cleaned.length) {
+          pTag.innerHTML += cleaned.charAt(i);
+          chatMessages.scrollTop = chatMessages.scrollHeight;
+          i++;
+          setTimeout(typeWriter, 15);
+        }
+      }
+      typeWriter();
+
+      chatHistory.push({ role: "assistant", content: cleaned });
+    } catch (err) {
+      console.error(err);
+      addMessageToChat("assistant", "Sorry, there was an error processing your request.");
+    } finally {
+      typingIndicator.classList.remove("visible");
+      isProcessing = false;
+      userInput.disabled = false;
+      sendButton.disabled = false;
+      userInput.focus();
+    }
+  }
+
+  function addMessageToChat(role, content) {
+    const messageEl = document.createElement("div");
+    messageEl.className = `message ${role}-message`;
+
+    const cleanedContent = cleanContent(content);
+    const htmlContent = marked.parse(cleanedContent);
+
+    messageEl.innerHTML = "<p></p>";
+    chatMessages.appendChild(messageEl);
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+
+    const pTag = messageEl.querySelector("p");
+    let index = 0;
+    function typeWriter() {
+      if (index < cleanedContent.length) {
+        pTag.innerHTML += cleanedContent.charAt(index);
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+        index++;
+        setTimeout(typeWriter, 15);
+      }
+    }
+    if (role === "assistant") {
+      typeWriter();
+    } else {
+      pTag.textContent = cleanedContent;
+    }
+  }
+
+  function cleanContent(content) {
+    return content
+      .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+      .replace(/\*(.*?)\*/g, '<em>$1</em>');
+  }
+
+  userInput.addEventListener("focus", () => {
+    setTimeout(() => {
+      userInput.scrollIntoView({ behavior: "smooth", block: "nearest" });
+    }, 300);
+  });
+</script>
 
   </body>
 </html>
