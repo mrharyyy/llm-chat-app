@@ -1,4 +1,4 @@
-// ✅ Final updated chat.js
+// chat.js
 
 const chatMessages = document.getElementById("chat-messages"); const userInput = document.getElementById("user-input"); const sendButton = document.getElementById("send-button"); const scrollButton = document.getElementById("scroll-button");
 
@@ -16,11 +16,11 @@ function showTypingIndicator(show) { const indicator = document.getElementById("
 
 function scrollToBottom() { chatMessages.scrollTop = chatMessages.scrollHeight; }
 
-function simulateTypingEffect(text, callback) { const messageElement = createMessageElement("", "assistant"); const content = messageElement.querySelector(".content"); chatMessages.appendChild(messageElement);
+function simulateTypingEffect(text, callback) { const messageElement = createMessageElement("", "assistant"); const content = messageElement.querySelector(".content"); chatMessages.appendChild(messageElement); scrollToBottom();
 
 let index = 0; const typingSpeed = 15;
 
-function typeChar() { if (index < text.length) { content.innerHTML += text[index++]; setTimeout(typeChar, typingSpeed); } else { content.innerHTML = marked.parse(text); if (callback) callback(); } }
+function typeChar() { if (index < text.length) { content.innerHTML += text[index++]; scrollToBottom(); setTimeout(typeChar, typingSpeed); } else { content.innerHTML = marked.parse(text); if (callback) callback(); } }
 
 typeChar(); }
 
@@ -34,20 +34,18 @@ chatMessages.addEventListener("scroll", () => { const threshold = 100; const isA
 
 function handleUserMessage(message) { showTypingIndicator(true);
 
-fetch("https://swift-chat.pages.dev", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ message }) }) .then((res) => res.json()) .then((data) => { showTypingIndicator(false);
+fetch("https://swift-api.ashishcloud.workers.dev/", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ message }) }) .then((response) => response.json()) .then((data) => { showTypingIndicator(false); let reply = data.reply || "Sorry, main samajh nahi paaya.";
 
-let reply = data.reply || "Maaf kijiye, mujhe kuchh samajh nahi aaya.";
-
-  if (/tum.*(banaya|creator|kisne banaya)/i.test(message)) {
-    reply = "Mujhe Ashish ne banaya hai 🤖✨";
+if (/kisne banaya|who made you/i.test(message)) {
+    reply = "Mujhe Ashish ne banaya hai ✨";
   }
 
   simulateTypingEffect(reply);
 })
-.catch((err) => {
+.catch((error) => {
   showTypingIndicator(false);
-  console.error("Error:", err);
-  simulateTypingEffect("Maaf kijiye, kuch galat ho gaya.");
+  console.error("Error:", error);
+  simulateTypingEffect("Oops! Kuchh galat ho gaya. Kripya baad mein try karein.");
 });
 
 }
