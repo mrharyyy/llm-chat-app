@@ -1,48 +1,54 @@
-<!DOCTYPE html><html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-    <title>Swift Chat⚡</title><!-- Stylesheet -->
-<link rel="stylesheet" href="style.css">
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Swift Chat⚡</title>
 
-<!-- Icons -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Stylesheet -->
+  <link rel="stylesheet" href="style.css">
 
-  </head>  <body>
-    <header>
-      <h1>Swift Chat⚡</h1>
-      <p>Ask anything, get instant answers</p>
-      <button id="theme-toggle" title="Toggle Theme"><i class="fas fa-moon"></i></button>
-    </header><div class="chat-container">
-  <div id="chat-messages" class="chat-messages">
-    <div class="message assistant-message">
-      <div class="avatar">🤖</div>
-      <div class="content">
-        <p>Hello! I'm Swift Chat. How can I help you today?</p>
+  <!-- Font Awesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+
+  <header>
+    <h1>Swift Chat⚡</h1>
+    <p>Ask anything, get instant answers</p>
+    <button id="theme-toggle" title="Toggle Theme"><i class="fas fa-moon"></i></button>
+  </header>
+
+  <div class="chat-container">
+    <div id="chat-messages" class="chat-messages">
+      <div class="message assistant-message">
+        <div class="avatar">🤖</div>
+        <div class="content">
+          <p>Hello! I'm Swift Chat. How can I help you today?</p>
+        </div>
       </div>
+    </div>
+
+    <div class="typing-indicator" id="typing-indicator">AI is thinking...</div>
+
+    <div class="message-input">
+      <textarea id="user-input" placeholder="Type your message here..." rows="1" autofocus></textarea>
+      <button id="mic-button" title="Speak"><i class="fas fa-microphone"></i></button>
+      <button id="send-button" title="Send"><i class="fas fa-paper-plane"></i></button>
     </div>
   </div>
 
-  <div class="typing-indicator" id="typing-indicator">AI is thinking...</div>
+  <div id="scroll-button" title="Scroll to Bottom"><i class="fas fa-arrow-down"></i></div>
 
-  <div class="message-input">
-    <textarea id="user-input" placeholder="Type your message here..." rows="1" autofocus></textarea>
-    <button id="mic-button" title="Speak"><i class="fas fa-microphone"></i></button>
-    <button id="send-button" title="Send"><i class="fas fa-paper-plane"></i></button>
-  </div>
-</div>
+  <footer>
+    <p>⚡ Swift Chat • Made by Ashish © 2025</p>
+  </footer>
 
-<div id="scroll-button" title="Scroll to Bottom"><i class="fas fa-arrow-down"></i></div>
+  <!-- Scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <script src="chat.js"></script>
+  <script src="voice.js"></script>
+  <script src="theme.js"></script>
 
-<footer>
-  <p>⚡ Swift Chat • Made by Ashish © 2025</p>
-</footer>
-
-<!-- Scripts -->
-<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
-<script src="chat.js"></script>
-<script src="voice.js"></script>
-<script src="theme.js"></script>
-
-  </body>
+</body>
 </html>
