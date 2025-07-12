@@ -3,120 +3,110 @@
 const chatMessages = document.getElementById("chat-messages");
 const userInput = document.getElementById("user-input");
 const sendButton = document.getElementById("send-button");
-const typingIndicator = document.getElementById("typing-indicator");
 const scrollButton = document.getElementById("scroll-button");
 
-let chatHistory = [];
-let isProcessing = false;
-
-// Auto-resize textarea
-userInput.addEventListener("input", function () {
-  this.style.height = "auto";
-  this.style.height = this.scrollHeight + "px";
-});
-
-// Send message on Enter
-userInput.addEventListener("keydown", function (e) {
-  if (e.key === "Enter" && !e.shiftKey) {
-    e.preventDefault();
-    sendMessage();
-  }
-});
-
-sendButton.addEventListener("click", sendMessage);
-
-// Scroll to bottom button
-scrollButton.addEventListener("click", () => {
-  chatMessages.scrollTop = chatMessages.scrollHeight;
-});
-
-chatMessages.addEventListener("scroll", () => {
-  if (chatMessages.scrollTop < chatMessages.scrollHeight - chatMessages.clientHeight - 200) {
-    scrollButton.classList.add("show");
-  } else {
-    scrollButton.classList.remove("show");
-  }
-});
-
-async function sendMessage() {
-  const message = userInput.value.trim();
-  if (!message || isProcessing) return;
-
-  isProcessing = true;
-  userInput.disabled = true;
-  sendButton.disabled = true;
-
-  addMessage("user", message);
-  chatHistory.push({ role: "user", content: message });
-
-  userInput.value = "";
-  userInput.style.height = "auto";
-  typingIndicator.classList.add("visible");
-
-  try {
-    const response = await fetch("/api/chat", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ messages: chatHistory })
-    });
-
-    const data = await response.json();
-    const raw = data.result || data.response || "Sorry, no response.";
-    const cleaned = cleanContent(raw);
-
-    addMessage("assistant", cleaned);
-    chatHistory.push({ role: "assistant", content: cleaned });
-  } catch (err) {
-    console.error(err);
-    addMessage("assistant", "❌ Sorry, something went wrong.");
-  } finally {
-    typingIndicator.classList.remove("visible");
-    isProcessing = false;
-    userInput.disabled = false;
-    sendButton.disabled = false;
-    userInput.focus();
-  }
-}
-
-function addMessage(role, content) {
-  const message = document.createElement("div");
-  message.className = `message ${role}-message`;
+function createMessageElement(message, sender = "user") {
+  const messageElement = document.createElement("div");
+  messageElement.classList.add("message", `${sender}-message`);
 
   const avatar = document.createElement("div");
-  avatar.className = "avatar";
-  avatar.textContent = role === "user" ? "👤" : "🤖";
+  avatar.classList.add("avatar");
+  avatar.innerHTML = sender === "user" ? "🧑" : "🤖";
 
-  const contentBox = document.createElement("div");
-  contentBox.className = "content";
-  contentBox.innerHTML = "<p></p>";
+  const content = document.createElement("div");
+  content.classList.add("content");
+  if (sender === "assistant") {
+    content.innerHTML = marked.parse(message); // ✅ Markdown/HTML parsing
+  } else {
+    content.textContent = message; // ✅ For safety, user text as plain
+  }
 
-  const messageText = contentBox.querySelector("p");
+  messageElement.appendChild(avatar);
+  messageElement.appendChild(content);
+  return messageElement;
+}
 
-  message.appendChild(avatar);
-  message.appendChild(contentBox);
-  chatMessages.appendChild(message);
+function appendMessage(message, sender = "user") {
+  const messageElement = createMessageElement(message, sender);
+  chatMessages.appendChild(messageElement);
+  scrollToBottom();
+}
+
+function showTypingIndicator(show) {
+  const indicator = document.getElementById("typing-indicator");
+  indicator.classList.toggle("visible", show);
+}
+
+function scrollToBottom() {
   chatMessages.scrollTop = chatMessages.scrollHeight;
+}
 
-  let i = 0;
-  function typeEffect() {
-    if (i < content.length) {
-      messageText.innerHTML += content.charAt(i);
-      i++;
-      chatMessages.scrollTop = chatMessages.scrollHeight;
-      setTimeout(typeEffect, 15);
+function simulateTypingEffect(text, callback) {
+  const messageElement = createMessageElement("", "assistant");
+  const content = messageElement.querySelector(".content");
+  chatMessages.appendChild(messageElement);
+  scrollToBottom();
+
+  let index = 0;
+  const typingSpeed = 15;
+
+  function typeChar() {
+    if (index < text.length) {
+      content.innerHTML += text[index++];
+      scrollToBottom();
+      setTimeout(typeChar, typingSpeed);
+    } else {
+      content.innerHTML = marked.parse(text); // ✅ Final formatted output
+      if (callback) callback();
     }
   }
 
-  if (role === "assistant") {
-    typeEffect();
-  } else {
-    messageText.textContent = content;
-  }
+  typeChar();
 }
 
-function cleanContent(content) {
-  let cleaned = content.replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>");
-  cleaned = cleaned.replace(/\*(.*?)\*/g, "<em>$1</em>");
-  cleaned = cleaned.replace(/^\s*[-*] /gm, "• ");
-  return cleaned;
+sendButton.addEventListener("click", () => {
+  const message = userInput.value.trim();
+  if (!message) return;
+  appendMessage(message, "user");
+  userInput.value = "";
+  handleUserMessage(message);
+});
+
+userInput.addEventListener("keypress", (e) => {
+  if (e.key === "Enter" && !e.shiftKey) {
+    e.preventDefault();
+    sendButton.click();
+  }
+});
+
+scrollButton.addEventListener("click", scrollToBottom);
+
+chatMessages.addEventListener("scroll", () => {
+  const threshold = 100;
+  const isAtBottom =
+    chatMessages.scrollHeight - chatMessages.scrollTop <=
+    chatMessages.clientHeight + threshold;
+  scrollButton.classList.toggle("show", !isAtBottom);
+});
+
+function handleUserMessage(message) {
+  showTypingIndicator(true);
+
+  setTimeout(() => {
+    showTypingIndicator(false);
+
+    // Dummy AI reply logic – you can replace this with your backend call
+    const aiReply = `Main ek AI Assistant hoon, isliye main aapki kai tarah ki madad kar sakta hoon. Yahaan kuch udaaharan hain:
+
+1. **Jawab dena** – Main aapke sawaalon ka jawab de sakta hoon.
+2. **Jaankaari dena** – Main vibhinn vishayon par jaankaari de sakta hoon.
+3. **Anuvaad karna** – Hindi se angrezi ya anya bhasha mein anuvaad.
+4. **Lekh likhna** – Kisi bhi vishay par lekh ya content likhna.
+5. **Sujhaav dena** – Kitabein, filmein, gaano ke sujhaav dena.
+6. **Charcha karna** – Aapke vicharon par baat karna.
+
+Toh, aap mujhe kya karne ke liye kahenge?`;
+
+    simulateTypingEffect(aiReply);
+  }, 1000);
 }
