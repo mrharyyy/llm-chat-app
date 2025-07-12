@@ -101,7 +101,7 @@ async function handleUserMessage(message) {
   showTypingIndicator(true);
 
   try {
-    const response = await fetch("https://swift-ai-chatbot-api.sleek.workers.dev/", {
+    const response = await fetch("https://swift-api-bot.sleek.workers.dev/", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ prompt: message }),
