@@ -10,7 +10,7 @@ if ('webkitSpeechRecognition' in window) {
 }
 
 if (recognition) {
-  recognition.lang = "en-US"; // Change to "hi-IN" for Hindi
+  recognition.lang = "hi-IN"; // 🔄 Hindi language
   recognition.continuous = false;
   recognition.interimResults = false;
 
