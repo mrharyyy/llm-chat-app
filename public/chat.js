@@ -20,7 +20,7 @@ function simulateTypingEffect(text, callback) { const messageElement = createMes
 
 let index = 0; const typingSpeed = 15;
 
-function typeChar() { if (index < text.length) { content.innerHTML += text[index++]; setTimeout(typeChar, typingSpeed); } else { content.innerHTML = marked.parse(text); if (callback) callback(); } }
+function typeChar() { if (index < text.length) { content.innerHTML += text[index++]; scrollToBottom(); setTimeout(typeChar, typingSpeed); } else { content.innerHTML = marked.parse(text); if (callback) callback(); } }
 
 typeChar(); }
 
@@ -34,11 +34,19 @@ chatMessages.addEventListener("scroll", () => { const threshold = 100; const isA
 
 function handleUserMessage(message) { showTypingIndicator(true);
 
-const lowerMessage = message.toLowerCase();
+fetch("https://ashchat-llm-api.endpoint.dev/", { method: "POST", headers: { "Content-Type": "application/json", }, body: JSON.stringify({ prompt: message }), }) .then((res) => res.json()) .then((data) => { showTypingIndicator(false); let reply = data.reply || "Mujhe kuch samajh nahi aaya. Kripya phir se poochhein.";
 
-// Special trigger: respond with creator name const creatorQuestions = [ "tumhe kisne banaya", "kisne banaya hai", "developer kaun hai", "tumhara creator kaun hai" ]; const isCreatorQuestion = creatorQuestions.some((q) => lowerMessage.includes(q));
+if (/tum.*(banaya|creator|kisne banaya)/i.test(message)) {
+    reply = "Mujhe Ashish ne banaya hai 🚀";
+  }
 
-if (isCreatorQuestion) { showTypingIndicator(false); simulateTypingEffect("Mujhe Ashish ne banaya hai 🚀"); return; }
+  simulateTypingEffect(reply);
+})
+.catch((err) => {
+  showTypingIndicator(false);
+  console.error("Error:", err);
+  simulateTypingEffect("Maaf kijiye, kuch galat ho gaya.");
+});
 
-fetch("https://ashchat-llm-api.endpoint.dev/", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ message }) }) .then((res) => res.json()) .then((data) => { showTypingIndicator(false); simulateTypingEffect(data.reply || "Maaf kijiye, kuchh galti ho gayi."); }) .catch((err) => { showTypingIndicator(false); console.error("Error:", err); simulateTypingEffect("Maaf kijiye, kuchh samasya ho gayi."); }); }
+}
 
